@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/6
 
-(require 'ert)
+(require 'aoc)
 (require 'seq)
 
 (defun make-buf (buf el len)
@@ -21,29 +21,19 @@
 (defun find-start-of-message-marker (packet)
   (car (cl-reduce 'check-packet packet :initial-value '(0 nil nil 14))))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
+(defun extract-packet (lines)
+  (split-string (nth 0 lines) "" t))
 
-(ert-deftest 06-find-start-of-packet-marker-test-data ()
-  (let* ((lines (read-lines "./06.test.txt"))
-         (packet (split-string (nth 0 lines) "" t)))
-    (should (= (find-start-of-packet-marker packet) 7))))
+(defsolution part1
+  (extract-packet)
+  (find-start-of-packet-marker))
 
-(ert-deftest 06-find-start-of-packet-marker-input-data ()
-  (let* ((lines (read-lines "./06.input.txt"))
-         (packet (split-string (nth 0 lines) "" t)))
-    (should (= (find-start-of-packet-marker packet) 1625))))
+(defsolution part2
+  (extract-packet)
+  (find-start-of-message-marker))
 
-(ert-deftest 06-find-start-of-message-marker-test-data ()
-  (let* ((lines (read-lines "./06.test.txt"))
-         (packet (split-string (nth 0 lines) "" t)))
-    (should (= (find-start-of-message-marker packet) 19))))
-
-(ert-deftest 06-find-start-of-message-marker-input-data ()
-  (let* ((lines (read-lines "./06.input.txt"))
-         (packet (split-string (nth 0 lines) "" t)))
-    (should (= (find-start-of-message-marker packet) 2250))))
-
-(ert "06")
+(defsolve "06"
+ ((part1 "./06.test.txt") 7)
+ ((part1 "./06.input.txt") 1625)
+ ((part2 "06.test.txt") 19)
+ ((part2 "06.input.txt") 2250))
