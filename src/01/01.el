@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/1
 
-(require 'ert)
+(require 'aoc)
 
 (defun item-sort (acc cur)
   (let ((buf (car acc))
@@ -32,33 +32,20 @@
   (let ((vals (descending-calories lst)))
     (apply '+ (cl-subseq vals 0 3))))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n")))
-
 (defun str-to-num (val)
   (if (equal val "") ""
     (string-to-number val)))
 
-(ert-deftest 01-max-calories-test-data ()
-  (let* ((lines (read-lines "./01.test.txt"))
-         (vals (mapcar 'str-to-num lines)))
-    (should (= (max-calories vals) 24000))))
+(defsolution-with-null part1
+  (mapcar 'str-to-num)
+  (max-calories))
 
-(ert-deftest 01-max-calories-input-data ()
-  (let* ((lines (read-lines "./01.input.txt"))
-         (vals (mapcar 'str-to-num lines)))
-    (should (= (max-calories vals) 67016))))
+(defsolution-with-null part2
+  (mapcar 'str-to-num)
+  (top-three-calories))
 
-(ert-deftest 01-top-three-calories-test-data ()
-  (let* ((lines (read-lines "./01.test.txt"))
-         (vals (mapcar 'str-to-num lines)))
-    (should (= (top-three-calories vals) 45000))))
-
-(ert-deftest 01-top-three-calories-input-data ()
-  (let* ((lines (read-lines "./01.input.txt"))
-         (vals (mapcar 'str-to-num lines)))
-    (should (= (top-three-calories vals) 200116))))
-
-(ert "01")
+(defsolve "01"
+  ((part1 "01.test.txt") 24000)
+  ((part1 "01.input.txt") 67016)
+  ((part2 "01.test.txt") 45000)
+  ((part2 "01.input.txt") 200116))

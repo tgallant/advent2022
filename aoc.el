@@ -74,14 +74,18 @@ operator."
 
 ;;; Advent of Code Helpers
 
-(defun read-lines (path)
+(defun read-lines (path omit-null)
   (with-temp-buffer
     (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
+    (split-string (buffer-string) "\n" omit-null)))
 
 (defmacro defsolution (name &rest forms)
   `(defun ,name (input)
-     ,(append `(->> (read-lines input)) forms)))
+     ,(append `(->> (read-lines input t)) forms)))
+
+(defmacro defsolution-with-null (name &rest forms)
+  `(defun ,name (input)
+     ,(append `(->> (read-lines input nil)) forms)))
 
 (defmacro defsolve (name &rest forms)
   (defun make-test (form)
