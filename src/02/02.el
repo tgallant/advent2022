@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/2
 
-(require 'ert)
+(require 'aoc)
 
 (defconst move-mapping '(A rock B paper C scissors X rock Y paper Z scissors))
 (defconst outcome-mapping '(X lose Y draw Z win))
@@ -32,11 +32,6 @@
 (defun calculate-rpc-score (rounds)
   (cl-reduce 'score rounds :initial-value 0))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
-
 (defun decrypt (move)
   (plist-get move-mapping (intern move)))
 
@@ -65,24 +60,16 @@
          (player2 (determine-move player1 outcome)))
     (cons player1 player2)))
 
-(ert-deftest 02-calculate-rpc-scores-test-data ()
-  (let* ((lines (read-lines "./02.test.txt"))
-         (rounds (mapcar 'str-to-round lines)))
-    (should (= (calculate-rpc-score rounds) 15))))
+(defsolution part1
+  (mapcar 'str-to-round)
+  (calculate-rpc-score))
 
-(ert-deftest 02-calculate-rpc-scores-input-data ()
-  (let* ((lines (read-lines "./02.input.txt"))
-         (rounds (mapcar 'str-to-round lines)))
-    (should (= (calculate-rpc-score rounds) 12772))))
+(defsolution part2
+  (mapcar 'str-to-round-v2)
+  (calculate-rpc-score))
 
-(ert-deftest 02-calculate-rpc-scores-v2-test-data ()
-  (let* ((lines (read-lines "./02.test.txt"))
-         (rounds (mapcar 'str-to-round-v2 lines)))
-    (should (= (calculate-rpc-score rounds) 12))))
-
-(ert-deftest 02-calculate-rpc-scores-v2-input-data ()
-  (let* ((lines (read-lines "./02.input.txt"))
-         (rounds (mapcar 'str-to-round-v2 lines)))
-    (should (= (calculate-rpc-score rounds) 11618))))
-
-(ert "02")
+(defsolve "02"
+  ((part1 "./02.test.txt") 15)
+  ((part1 "./02.input.txt") 12772)
+  ((part2 "./02.test.txt") 12)
+  ((part2 "./02.input.txt") 11618))

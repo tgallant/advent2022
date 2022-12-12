@@ -33,12 +33,12 @@ into the next, etc., before evaluation.  FORMS are treated as list designators."
 
 (defun diamond-inserter (insert-fun)
   (simple-inserter (lambda (acc next)
-                     (cl-case (count-if #'<>p next)
+                     (cl-case (cl-count-if #'<>p next)
                        (0 (funcall insert-fun acc next))
-                       (1 (substitute-if acc #'<>p next))
+                       (1 (cl-substitute-if acc #'<>p next))
                        (t (let ((r (gensym "R")))
                             `(let ((,r ,acc))
-                               ,(substitute-if r #'<>p next))))))))
+                               ,(cl-substitute-if r #'<>p next))))))))
 
 (defmacro -<> (initial-form &rest forms)
   "Like ->, but if a form in FORMS has one or more symbols named <> as top-level
@@ -81,21 +81,20 @@ operator."
 
 (defmacro defsolution (name &rest forms)
   `(defun ,name (input)
-     ,(append `(->> (read-lines input t)) forms)))
+     ,(append `(-<>> (read-lines input t)) forms)))
 
 (defmacro defsolution-with-null (name &rest forms)
   `(defun ,name (input)
-     ,(append `(->> (read-lines input nil)) forms)))
+     ,(append `(-<>> (read-lines input nil)) forms)))
 
 (defmacro defsolve (name &rest forms)
   (defun make-test (form)
     (let* ((fn (car form))
-           (res (apply (car fn) (cdr fn)))
            (val (cadr form))
            (fn-name (symbol-name (car fn)))
            (fn-input (cadr (split-string (cadr fn) "\\." t)))
            (test-name (intern (string-join `(,name ,fn-name ,fn-input) "-"))))
       (eval `(ert-deftest ,test-name ()
-         (should (= ,fn ,val))) t)))
+         (should (equal ,fn ,val))) t)))
   (mapc 'make-test forms)
   (ert name))

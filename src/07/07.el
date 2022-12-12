@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/7
 
-(require 'ert)
+(require 'aoc)
 (require 'subr-x)
 
 (defun add-size-to-dirs (size dirs stack)
@@ -55,25 +55,14 @@
          (diff (- 30000000 free)))
     (car (cl-reduce 'find-smallest-dir sizes :initial-value `(1.0e+INF ,diff)))))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
+(defsolution part1
+  (sum-directory-sizes))
 
-(ert-deftest 07-sum-directory-sizes-test-data ()
-  (let* ((lines (read-lines "./07.test.txt")))
-    (should (= (sum-directory-sizes lines) 95437))))
+(defsolution part2
+  (smallest-dir-to-delete))
 
-(ert-deftest 07-sum-directory-sizes-input-data ()
-  (let* ((lines (read-lines "./07.input.txt")))
-    (should (= (sum-directory-sizes lines) 1778099))))
-
-(ert-deftest 07-smallest-dir-to-delete-test-data ()
-  (let* ((lines (read-lines "./07.test.txt")))
-    (should (= (smallest-dir-to-delete lines) 24933642))))
-
-(ert-deftest 07-smallest-dir-to-delete-input-data ()
-  (let* ((lines (read-lines "./07.input.txt")))
-    (should (= (smallest-dir-to-delete lines) 1623571))))
-
-(ert "07")
+(defsolve "07"
+  ((part1 "./07.test.txt") 95437)
+  ((part1 "./07.input.txt") 1778099)
+  ((part2 "./07.test.txt") 24933642)
+  ((part2 "./07.input.txt") 1623571))

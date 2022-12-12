@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/4
 
-(require 'ert)
+(require 'aoc)
 
 (defun determine-if-overlapping (acc cur)
   (let* ((left (nth 0 cur))
@@ -30,11 +30,6 @@
 (defun count-fully-overlapping-assignments-v2 (assignments)
   (cl-reduce 'determine-if-overlapping-v2 assignments :initial-value 0))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
-
 (defun str-to-range (str)
   (let ((range (mapcar 'string-to-number (split-string str "-" t))))
     (number-sequence (nth 0 range) (nth 1 range))))
@@ -42,24 +37,16 @@
 (defun str-to-assignments (str)
   (mapcar 'str-to-range (split-string str "," t)))
 
-(ert-deftest 04-count-fully-overlapping-assignments-test-data ()
-  (let* ((lines (read-lines "./04.test.txt"))
-         (assignments (mapcar 'str-to-assignments lines)))
-    (should (= (count-fully-overlapping-assignments assignments) 2))))
+(defsolution part1
+  (mapcar 'str-to-assignments)
+  (count-fully-overlapping-assignments))
 
-(ert-deftest 04-count-fully-overlapping-assignments-input-data ()
-  (let* ((lines (read-lines "./04.input.txt"))
-         (assignments (mapcar 'str-to-assignments lines)))
-    (should (= (count-fully-overlapping-assignments assignments) 509))))
+(defsolution part2
+  (mapcar 'str-to-assignments)
+  (count-fully-overlapping-assignments-v2))
 
-(ert-deftest 04-count-fully-overlapping-assignments-v2-test-data ()
-  (let* ((lines (read-lines "./04.test.txt"))
-         (assignments (mapcar 'str-to-assignments lines)))
-    (should (= (count-fully-overlapping-assignments-v2 assignments) 4))))
-
-(ert-deftest 04-count-fully-overlapping-assignments-v2-input-data ()
-  (let* ((lines (read-lines "./04.input.txt"))
-         (assignments (mapcar 'str-to-assignments lines)))
-    (should (= (count-fully-overlapping-assignments-v2 assignments) 870))))
-
-(ert "04")
+(defsolve "04"
+  ((part1 "./04.test.txt") 2)
+  ((part1 "./04.input.txt") 509)
+  ((part2 "./04.test.txt") 4)
+  ((part2 "./04.input.txt") 870))

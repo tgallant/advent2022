@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/3
 
-(require 'ert)
+(require 'aoc)
 
 (defun uppercase? (s)
   (let ((case-fold-search nil))
@@ -29,11 +29,6 @@
          (priorities (mapcar 'calculate-priority badge-types)))
     (cl-reduce '+ priorities)))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
-
 (defun str-to-compartments (str)
   (let* ((letters (split-string str "" t))
          (len (length letters))
@@ -50,24 +45,16 @@
         (cons (list elf) (append grp (list buf)))
       (cons (append buf (list elf)) grp))))
 
-(ert-deftest 03-calculate-item-priority-test-data ()
-  (let* ((lines (read-lines "./03.test.txt"))
-         (rucksacks (mapcar 'str-to-compartments lines)))
-    (should (= (calculate-item-priority rucksacks) 157))))
+(defsolution part1
+  (mapcar 'str-to-compartments)
+  (calculate-item-priority))
 
-(ert-deftest 03-calculate-item-priority-input-data ()
-  (let* ((lines (read-lines "./03.input.txt"))
-         (rucksacks (mapcar 'str-to-compartments lines)))
-    (should (= (calculate-item-priority rucksacks) 8493))))
+(defsolution part2
+  (cl-reduce 'lines-to-groups <> :initial-value '())
+  (determine-badge-item-type))
 
-(ert-deftest 03-determine-badge-item-type-test-data ()
-  (let* ((lines (read-lines "./03.test.txt"))
-         (groups (cl-reduce 'lines-to-groups lines :initial-value '())))
-    (should (= (determine-badge-item-type groups) 70))))
-
-(ert-deftest 03-determine-badge-item-type-input-data ()
-  (let* ((lines (read-lines "./03.input.txt"))
-         (groups (cl-reduce 'lines-to-groups lines :initial-value '())))
-    (should (= (determine-badge-item-type groups) 2552))))
-
-(ert "03")
+(defsolve "03"
+  ((part1 "./03.test.txt") 157)
+  ((part1 "./03.input.txt") 8493)
+  ((part2 "./03.test.txt") 70)
+  ((part2 "./03.input.txt") 2552))

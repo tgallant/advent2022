@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/5
 
-(require 'ert)
+(require 'aoc)
 (require 'subr-x)
 
 (defun rearrange-stacks (stacks moves)
@@ -31,11 +31,6 @@
   (mapc 'step moves)
   (string-join (mapcar 'car (hash-table-values stacks))))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n")))
-
 (defun lines-to-stacks-and-moves (acc cur)
   (let ((stacks (nth 0 acc))
         (moves (nth 1 acc))
@@ -45,9 +40,6 @@
           ((eq t seen-newline?)
            (list stacks (append moves (list cur)) seen-newline?))
           ((list (append stacks (list cur)) moves seen-newline?)))))
-
-(defun make-stacks-and-moves (lines)
-  (cl-reduce 'lines-to-stacks-and-moves lines :initial-value '()))
 
 (defun parse-stack-str (acc cur)
   (let ((pos (nth 0 acc))
@@ -93,32 +85,20 @@
 (defun make-moves (lines)
   (mapcar 'build-move lines))
 
-(ert-deftest 05-rearrange-stacks-test-data ()
-  (let* ((lines (read-lines "./05.test.txt"))
-         (stacks-and-moves (make-stacks-and-moves lines))
-         (stacks (make-stacks (nth 0 stacks-and-moves)))
-         (moves (make-moves (nth 1 stacks-and-moves))))
-    (should (equal (rearrange-stacks stacks moves) "CMZ"))))
+(defun make-stacks-and-moves (lines)
+  (let ((res (cl-reduce 'lines-to-stacks-and-moves lines :initial-value '())))
+    (list (make-stacks (nth 0 res)) (make-moves (nth 1 res)))))
 
-(ert-deftest 05-rearrange-stacks-input-data ()
-  (let* ((lines (read-lines "./05.input.txt"))
-         (stacks-and-moves (make-stacks-and-moves lines))
-         (stacks (make-stacks (nth 0 stacks-and-moves)))
-         (moves (make-moves (nth 1 stacks-and-moves))))
-    (should (equal (rearrange-stacks stacks moves) "LBLVVTVLP"))))
+(defsolution-with-null part1
+  (make-stacks-and-moves)
+  (apply 'rearrange-stacks))
 
-(ert-deftest 05-rearrange-stacks-v2-test-data ()
-  (let* ((lines (read-lines "./05.test.txt"))
-         (stacks-and-moves (make-stacks-and-moves lines))
-         (stacks (make-stacks (nth 0 stacks-and-moves)))
-         (moves (make-moves (nth 1 stacks-and-moves))))
-    (should (equal (rearrange-stacks-v2 stacks moves) "MCD"))))
+(defsolution-with-null part2
+  (make-stacks-and-moves)
+  (apply 'rearrange-stacks-v2))
 
-(ert-deftest 05-rearrange-stacks-v2-input-data ()
-  (let* ((lines (read-lines "./05.input.txt"))
-         (stacks-and-moves (make-stacks-and-moves lines))
-         (stacks (make-stacks (nth 0 stacks-and-moves)))
-         (moves (make-moves (nth 1 stacks-and-moves))))
-    (should (equal (rearrange-stacks-v2 stacks moves) "TPFFBDRJD"))))
-
-(ert "05")
+(defsolve "05"
+  ((part1 "./05.test.txt") "CMZ")
+  ((part1 "./05.input.txt") "LBLVVTVLP")
+  ((part2 "./05.test.txt") "MCD")
+  ((part2 "./05.input.txt") "TPFFBDRJD"))

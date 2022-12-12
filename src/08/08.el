@@ -1,6 +1,6 @@
 ;; https://adventofcode.com/2022/day/7
 
-(require 'ert)
+(require 'aoc)
 (require 'subr-x)
 
 (defun getrow (grid row-idx from to)
@@ -78,35 +78,19 @@
         (cl-reduce '* (car res)))))
   (apply 'max (mapcar 'score (find-visible-trees grid))))
 
-(defun read-lines (path)
-  (with-temp-buffer
-    (insert-file-contents path)
-    (split-string (buffer-string) "\n" t)))
-
 (defun make-row (line)
   (mapcar 'string-to-number (split-string line "" t)))
 
-(defun make-grid (lines)
-  (mapcar 'make-row lines))
+(defsolution part1
+  (mapcar 'make-row)
+  (count-visible-trees))
 
-(ert-deftest 08-count-visible-trees-test-data ()
-  (let* ((lines (read-lines "./08.test.txt"))
-         (grid (make-grid lines)))
-    (should (= (count-visible-trees grid) 21))))
+(defsolution part2
+  (mapcar 'make-row)
+  (find-best-scenic-score))
 
-(ert-deftest 08-count-visible-trees-input-data ()
-  (let* ((lines (read-lines "./08.input.txt"))
-         (grid (make-grid lines)))
-    (should (= (count-visible-trees grid) 1669))))
-
-(ert-deftest 08-find-best-scenic-score-test-data ()
-  (let* ((lines (read-lines "./08.test.txt"))
-         (grid (make-grid lines)))
-    (should (= (find-best-scenic-score grid) 8))))
-
-(ert-deftest 08-find-best-scenic-score-input-data ()
-  (let* ((lines (read-lines "./08.input.txt"))
-         (grid (make-grid lines)))
-    (should (= (find-best-scenic-score grid) 331344))))
-
-(ert "08")
+(defsolve "08"
+  ((part1 "./08.test.txt") 21)
+  ((part1 "./08.input.txt") 1669)
+  ((part2 "./08.test.txt") 8)
+  ((part2 "./08.input.txt") 331344))
